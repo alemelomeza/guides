@@ -99,6 +99,12 @@ Creación de una base de datos:
 mysql> CREATE DATABASE 'DATABASE_NAME' DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
+Eliminación de una base de datos:
+
+```mysql
+mysql> DROP DATABASE 'DATABASE_NAME';
+```
+
 Creación de un usuario:
 
 ```mysql

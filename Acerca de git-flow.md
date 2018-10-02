@@ -1,86 +1,153 @@
-# Flujo de trabajo con git flow
+## Acerca de git-flow
 
-Vincent Driessen define git flow como una colección de extensiones de Git que nos facilita un conjunto de operaciones de alto nivel para trabajar con las siguientes ramas:
+git-flow es un conjunto de extensiones para git que proveen comandos de alto nivel para operar repositorios basados en el modelo de ramificaciones de Vincent Driessen.
 
-* __master__: es la que contiene la última vesión de nuestro proyecto y usaremos para desplegar en __producción__.
-* __develop__: es la que contiene el último estado del desarrollo del mismo, es decir, hasta el último commit que hayamos hecho.
-* __feature__: se usarán para desarrollar nuevas funcionalidades, se crearán a partir de la rama develop y al terminar con esta funcionalidad nueva, se tiene que fusionar otra vez con __develop__.
-* __release__: se usarán para lanzar una nueva versión de nuestro proyecto. Se usarán solo para los últimos retoques antes de liberar la nueva vesión, como cambiar el número de esta, y crearán a partir de la rama __develop__ y se fusionara tanta con __master__ (para poder ser desplegadas en producción) como con __develop__.
-* __hotfix__: se usarán para esos cambios rápidos que queremos realizar como arreglar un bug sencillo en producción mientras que al mismo tiempo estamos desarrollando una nueva funcionalidad y queremos desplegar este arreglo lo antes posible. Se crean a partir de la rama __master__ y se fusionan con __master__ y __develop__.
+Este documento de referencia explica las operaciones básicas de git-flow, los comandos y sus efectos.
 
-Una vez instalado y desde el directorio raiz de nuestro proyecto, tenermos que inicializarlo:
+## Conseptos básicos
 
+* git-flow provee una excelente ayuda en línea de comandos e información. Leé con atención lo que sucede.
+* git-flow funciona básandose en fusiones de ramas (_merge_). No reorganiza (_branch rebase_) las ramas de características (_feature branches_).
 
-```
-$ git flow init
-```
+## Configuración
 
-Esto nos hará una serie de preguntas sobre como queremos nombrar a las diferentes ramas y el prefijo de nuestras versiones. Si queremos usar las de estan por defecto, pulsamos enter en todas las opciones o podemos usar esta instrucción para inicializarlo:
+* Un prerequisito es una intalación de git en funcionamiento.
+* git-flow funciona en OSX, Linux y Windows.
 
-```
-$ git flow init -d
-```
+__OSX__:
 
-Ahora ya tenemos creada nuestra rama __develop__ y estamos listos para empezar a trabajar.
-
-## Trabajando con features
-
-Para empezar a desarrollar una nueva funcionalidad tenemos que crearla usando:
-
-```
-$ git flow feature start nombre_de_funcionalidad
+```bash
+$ brew install git-flow-avh
 ```
 
-Automáticamente crea la rama feature/nombredefuncionalidad y posiciona en ella. Ahora después de varias confirmaciones (commits) puedes cerrarla usando:
+__Linux__:
 
-```
-$ git flow feature finish nombre_de_funcionalidad
-```
-
-Si en algún momento queremos ver que ramas de __features__ tenemos actualmente, podemos hacerlo usando:
-
-```
-$ git flow feature
+```bash
+$ apt-get install git-flow
 ```
 
-Si quisiéramos remotar una de esas funcionalidades que estamos realizando, por ejemplo después de solucionar un __hotfix__, podemos hacerlo usando:
+__Windows__:
 
-```
-$ git flow feature checkout nombre_de_funcionalidad
-```
-
-## Trabajo con releases
-
-
-Para liberar una nueva versión de nuestro proyecto tenemos que crearla usando:
-
-
-```
-$ git flow release start version_1
+```bash
+C:\> choco install git-flow-avh
 ```
 
-Ahora después de varias confirmaciones (commits) puedes cerrarla usando:
+## Introducción
+
+git-flow necesita ser inicializado para poder alterar la configuración del proyecto.
+
+### Inicialización
+
+Comience con usar git-flow inicializándolo desde dentro de un repositorio git existente:
 
 ```
-$ git flow release finish version_1
+git flow init
 ```
 
-Esto buscará cambios en nuestro repositorio remoto, fusionará esta versión con nuestras ramas __master__ y __develop__, borrando la __release__ y dejándonos todo listo para desplegar desde la rama __master__.
+Deberá contestar algunas preguntas relacionadas con las convenciones de nombres para las ramas. Se recomienda utllizar los valor predeterminados.
 
-## Trabajando con hotfixes
+## Carácteristicas
 
-Si trabajamos en una funcionalidad y tenemos que cambiar algo que no funciona bien en nuestro entorno de producción, crearemos una rama __hotfix__ usando:
+* Desarrollar características para futuras versiones.
+* Es típico que sóllo se use en los repositorios para desarrollo.
+
+### Comenzar una nueva característica
+
+El desarrollo de nuevas características  parte de la rama __develop__.
+
+Comienze con una nueva característica usando:
 
 ```
-$ git flow hotfix start error_en_produccion
+git flow feature start mi_caracteristica
 ```
 
-Esta rama será creada a partir de la rama __master__, ya que es lo último que hemos desplegado. Al arreglar el problema podemos usar:
+Esta acción  crea una nueva rama derivada de __develop__ y salta a esta, estableciéndola como rama de trabajo actual.
+
+### Finalizar una característica
+
+Finaliza el desarrolo de una característica. Esta acción realiza lo siguiente:
+
+* Fusiona _mi_caracteristica_ en __develop__.
+* Borra la rama _mi_caracteristica_.
+* Salta a la rama __develop__, estableciéndola como rama de trabajo actual.
 
 ```
-$ git flow hotfix finish error_en_produccion
+git flow feature finish mi_caracteristica
 ```
 
-Esto fucionará los cambios tanto con __develop__ como con __master__, teniendo la solución al problema listo para ser desplegado en producción.
+### Publicar una característica
 
-Git Flow automatiza muy bien la manera de trabajar con Git, aplicando un flujo de trabajo probado, que se adapta perfectamente a la mayoría de proyectos.
+¿Estás trabajando colaborativamente? Publica una característica a un servidor remoto para que así puede ser vista otros.
+
+```
+git flow feature publish mi_caracteristica
+```
+
+### Obeniendo características publicadas
+
+Obtiene una característica publicada por otro y mantiene un seguimiento de sus cambios.
+
+```
+git flow feature pull mi_caracteristica
+```
+
+## Publicar una versión
+
+* Prepara una versión para producción.
+* Permite arreglos menores y la preparación de los metadatos para la publicación.
+
+### Comenzar una publicación
+
+Para comenzar una publicación, usa el comando `git-flow release`. Creará una rama de publicacón derivada de la rama __develop__.
+
+```
+git flow release start version!.0.0 [base]
+```
+
+Opcionalmente, puede usar `[base]` indicando el código sha-1 del cambio desde el cual comenzar la versión  de publicación. El cambio deber, ser parte de la rama __develop__.
+
+Es apropiado publicar remotamente la rama de publicación después de crearla para permitir que otros desarrolladores envíen cambios para esta versión. Hazlo de forma similar a publicar características:
+
+```
+git flow release publish version1.0.0
+```
+
+(Pude establecer el seguimiento de los cambios de la publicación remota utilizando el comando `git flow release track version1.0.0`)
+
+### Concluir una publicación
+
+Dar cierre a una publicación es una gran paso. Realiza varias acciones:
+
+* Fusiona la rama de la publicación con la rama __master__.
+* Etiqueta el cambio con su nombre
+* Vuelve a fusionar la publicación con la rama __develop__.
+* Borrar la rama de la publicación.
+
+```
+git flow release finish version1.0.0
+```
+
+## Revisiones
+
+* Las revisiones surgen de la necesidad de actuar inmediatamente cuando la versión ejecutándose en producción se encuentra en un estado que no deseamos.
+* Puede ramificarse desde la versión correspondiente etiquetada en la rama __master__ que corresponde a la versión en producción.
+
+### Comensar un revisión
+
+Como otros comandos de git-flow, una revisión se abre con:
+
+```
+git flow hotfix start version1.0.1 [basename]
+```
+
+El argumento de la versión determina el nombre de la revisión. Opcionalmente, puede agregar un nombre para la base desde la cual comenzar.
+
+### Cerrar una revisión
+
+Al cerrar un revisión, esta se fusiona con las ramas __develop__ y __master__. Luego, el cambio en __master__ es etiquetado con el nombre de la revisión.
+
+```
+git flow hotfix finish version1.0.1
+```
+
+![commandos git-flow](images/acerca_de_git-flow_img1.png)

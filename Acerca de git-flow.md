@@ -29,7 +29,7 @@ $ apt-get install git-flow
 __Windows__:
 
 ```bash
-C:\> choco install git-flow-avh
+C:\> choco install gitflow-avh
 ```
 
 ## Introducción

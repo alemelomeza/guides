@@ -84,7 +84,7 @@ $ sudo apt-get install -yq mysql-server
 Configuración de seguridad:
 
 ```bash
-$ sudo mysql_secure_instalation
+$ sudo mysql_secure_installation
 ```
 
 Conexión a la consola de MySQL:
@@ -160,7 +160,7 @@ Permisos de carpetas:
 ```bash
 $ sudo cd /var/www/html/PROJECT-NAME && \
 chgrp -R www-data storage/ bootstrap/cache && \
-chmod -R ug+rwx storate/ bootstrap/cache
+chmod -R ug+rwx storage/ bootstrap/cache
 ```
 
 Configuración del host virtual:
@@ -173,7 +173,7 @@ Contenido de _PROJECT_NAME.conf_:
 
 ```
 <VirtualHost *:80>
-	
+
     ServerName PROJECT_NAME.TLD
 
     DocumentRoot "/var/www/html/PROJECT_NAME/public"
